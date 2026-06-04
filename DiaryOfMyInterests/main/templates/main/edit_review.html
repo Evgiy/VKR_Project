@@ -1,0 +1,22 @@
+<form id="editForm" method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="review-right">
+
+    {{ form.rating.label_tag }}
+    {{ form.rating }}
+
+    {{ form.full_text.label_tag }}
+    {{ form.full_text }}
+
+    {% if form.cover %}
+        {{ form.cover }}
+    {% endif %}
+
+    {% if form.photo %}
+        {{ form.photo }}
+    {% endif %}
+
+  </div>
+  <button type="submit" class="publish-btn">Сохранить</button>
+  <button type="button" class="publish-btn" onclick="closeEditPanel()">Отмена</button>
+</form>

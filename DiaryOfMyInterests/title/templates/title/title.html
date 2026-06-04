@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Дневник хронник моих интересов — макет</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Roboto:wght@300;400&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    :root{
+      --bg: #9b86e1;
+      --white: #ffffff;
+      --accent: #6e4dd6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: "Roboto", "Helvetica", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .hero {
+      text-align: center;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .hero__title {
+      font-family: "Montserrat", "Helvetica", Arial, sans-serif;
+      font-weight: 800;
+      font-size: 64px;
+      line-height: 1;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+      color: var(--white);
+    }
+
+    .hero__desc {
+      font-size: 20px;
+      font-weight: 300;
+      max-width: 760px;
+      margin: 0 auto 60px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 180px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 14px 34px;
+      border-radius: 8px;
+      background: var(--white);
+      min-width: 220px;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.06) inset;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn--primary {
+      color: var(--accent);
+      font-family: "Montserrat", sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    @media (max-width: 820px) {
+      .hero__title {
+        font-size: 44px;
+      }
+
+      .hero__desc {
+        font-size: 16px;
+        max-width: 560px;
+        margin-bottom: 32px;
+      }
+
+      .hero__actions {
+        gap: 40px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        min-width: 160px;
+        padding: 12px 20px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .hero__title {
+        font-size: 28px;
+      }
+
+      .hero__desc {
+        font-size: 14px;
+        max-width: 320px;
+      }
+
+      .hero__actions {
+        gap: 16px;
+      }
+
+      .btn {
+        min-width: 140px;
+        padding: 10px 16px;
+        border-radius: 6px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="stage">
+    <main class="hero" role="main" aria-labelledby="hero-title">
+
+      <h1 id="hero-title" class="hero__title">
+        ДНЕВНИК ХРОНИК МОИХ ИНТЕРЕСОВ
+      </h1>
+
+      <p class="hero__desc">
+        Оставляй отзывы на любимые вещи и получай персональные рекомендации,
+        основанные на мнениях людей с похожими вкусами.
+      </p>
+
+      <div class="hero__actions" role="navigation" aria-label="Действия">
+
+        <a
+          class="btn btn--primary"
+          href="{% url 'users:registration' %}"
+          id="register-btn"
+        >
+          РЕГИСТРАЦИЯ
+        </a>
+
+        <a
+          class="btn btn--primary"
+          href="{% url 'users:login' %}"
+          id="login-btn"
+        >
+          ВХОД
+        </a>
+
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% for review in reviews %}
+<div class="object-review-card" style="border:1px solid #ddd; padding:10px; margin-bottom:10px; border-radius:6px; background:#f9f9f9;">
+    <div class="object-review-email" style="font-weight:bold; margin-bottom:5px;">
+        {{ review.review.user.username }}
+    </div>
+
+    <div class="object-review-rating" style="margin-bottom:5px;">
+        Оценка: {{ review.review.rating }} из 5
+    </div>
+
+    <div class="object-review-text" style="white-space:pre-wrap; margin-bottom:5px;">
+        {{ review.review.full_text|default:"Отзыв отсутствует" }}
+    </div>
+
+    <div class="object-review-date" style="font-size:0.85em; color:#666;">
+        {{ review.review.date }}
+    </div>
+</div>
+{% empty %}
+<p style="color:#999; font-style:italic;">Отзывов пока нет</p>
+{% endfor %}

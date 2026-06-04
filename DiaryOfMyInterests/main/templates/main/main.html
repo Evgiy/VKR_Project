@@ -1,0 +1,956 @@
+<!DOCTYPE html><html lang="ru">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <title>Дневник хроник моих интересов</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; background: #9b86e1; }/* Header */
+.header {
+  background: #ffffff;
+  padding: 20px 40px;
+  position: relative;
+}
+
+.user {
+  position: absolute;
+  left: 40px;
+  top: 20px;
+  color: #8f88dd;
+  font-size: 18px;
+}
+
+.title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #8f88dd;
+  margin-bottom: 20px;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.nav button {
+  background: #8f88dd;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Main area */
+.main {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.panel {
+  width: 70%;
+  min-height: 420px;
+  background: #ffffff;
+  border-radius: 12px;
+  display: none;
+  padding: 20px;
+}
+
+/* Review panel */
+.review-select {
+  width: 300px;
+  height: 40px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 16px;
+}
+
+/* Grid panel */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.grid-item {
+  height: 120px;
+  background: #f2f2f2;
+  border-radius: 10px;
+}
+
+#editPanel {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+#editOverlay {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 900;
+}
+
+.review-wrapper {
+    background: #f5f5f5;
+    padding: 25px;
+    border-radius: 14px;
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+.review-photo-box {
+    width: 100%;
+    height: 340px;
+    background: #dcdcdc;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    overflow: hidden;
+}
+
+.review-photo-box {
+    width: 250px;
+    height: 250px;
+    background: #dcdcdc;
+    border: 2px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.review-photo-box span {
+    font-size: 60px;
+    color: #999;
+}
+
+.review-photo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+}
+
+.review-right {
+    flex: 1;
+}
+
+.review-right input,
+.review-right select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #e0e0e0;
+}
+
+.review-right textarea {
+    width: 100%;
+    height: 160px;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #e0e0e0;
+    resize: none;
+    margin-bottom: 10px;
+}
+
+.rating-line {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.publish-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: #8a7ce0;
+    color: white;
+    cursor: pointer;
+}
+
+.clear-photo-btn {
+    margin-top: 10px;
+    background: #8a7ce0;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.clear-photo-btn:hover {
+    opacity: 0.9;
+}
+
+.review-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.review-card-left {
+    width: 180px;
+    height: 240px;
+    background: #f3f3f3;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-card-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.review-card-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.review-meta {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.review-text {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+.review-footer {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.review-date {
+    font-size: 12px;
+    color: #888;
+}
+
+.review-btn {
+    background: #8a7ce0;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.review-btn:hover {
+    opacity: 0.9;
+}
+
+.recommend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+}
+
+#reviewsOverlay {
+  display: none;
+  position: fixed;
+  top:0; left:0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.3);
+  z-index: 900;
+}
+
+#reviewsPanel {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 800px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  z-index: 1000;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.object-review-card {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.object-review-email {
+  color: #8a7ce0;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.object-review-rating {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.object-review-text {
+  color: #333;
+}
+
+.reviews-filters {
+    display:flex;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.reviews-filters select {
+    padding:10px 14px;
+    border-radius:10px;
+    border:none;
+    background:#9b86e1;
+    color:white;
+    font-size:14px;
+}
+
+  </style>
+
+</head>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<body>
+  <div class="header">
+    <div class="user">{{ user_email }}</div>
+    <div class="title">ДНЕВНИК ХРОНИК МОИХ ИНТЕРЕСОВ</div>
+    <div class="nav">
+        <button onclick="showProfile()">профиль</button>
+      <button onclick="showReview()">оставить отзыв</button>
+      <button onclick="showGrid()">мои отзывы</button>
+      <button onclick="showGrid2()">рекомендации</button>
+      <button onclick="showAbout()">о проекте</button>
+    </div>
+  </div>  <div class="main">
+
+<div id="reviewPanel" class="panel">
+    <select class="review-select"
+            id="categorySelect"
+            onchange="showForm()">
+        <option value="">Выберите категорию</option>
+        <option value="book">Книга</option>
+        <option value="film">Фильм</option>
+        <option value="restaurant">Заведение</option>
+        <option value="event">Мероприятие</option>
+        <option value="game">Игра</option>
+        <option value="series">Сериал</option>
+        <option value="music">Музыка</option>
+    </select>
+
+    <div class="review-wrapper">
+        <div class="review-right">
+            <form id="reviewForm"
+                  class="add-review-form"
+                  method="post"
+                  enctype="multipart/form-data"
+                  action="">
+                {% csrf_token %}
+                <input type="file"
+                       id="hiddenFileInput"
+                       name="cover"
+                       accept="image/*"
+                       style="display:none;">
+                <div style="display:flex; gap:25px;">
+
+                    <div class="review-left">
+                        <div class="review-photo-box"
+                             onclick="triggerFileInput()"
+                             style="display:none;">
+                            <span id="plusIcon">+</span>
+                            <img id="previewImage"
+                                 style="display:none;
+                                        max-width:100%;
+                                        max-height:100%;
+                                        object-fit:cover;">
+                        </div>
+                        <button type="button"
+                                class="clear-photo-btn"
+                                id="clearPhotoBtn"
+                                onclick="clearPhoto()"
+                                style="display:none">
+                            Очистить
+                        </button>
+                    </div>
+
+                    <div style="flex:1;">
+                        <div id="dynamicFormFields"
+                             style="margin-top:10px;">
+                        </div>
+                        <button type="submit"
+                                class="publish-btn"
+                                id="publishBtn"
+                                style="margin-top:10px; display:none;">
+                            Опубликовать
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="forms-storage" style="display:none;">
+    <div id="book-form">
+        {{ book_form.as_p }}
+    </div>
+
+    <div id="film-form">
+        {{ film_form.as_p }}
+    </div>
+
+    <div id="restaurant-form">
+        {{ restaurant_form.as_p }}
+    </div>
+
+    <div id="event-form">
+        {{ event_form.as_p }}
+    </div>
+
+    <div id="game-form">
+        {{ game_form.as_p }}
+    </div>
+
+    <div id="series-form">
+        {{ series_form.as_p }}
+    </div>
+
+    <div id="music-form">
+        {{ music_form.as_p }}
+    </div>
+</div>
+
+<div id="gridPanel" class="panel">
+<div class="reviews-filters">
+
+    <select id="categoryFilter" onchange="filterReviews()">
+        <option value="all">Все категории</option>
+        <option value="book">Книги</option>
+        <option value="film">Фильмы</option>
+        <option value="restaurant">Заведения</option>
+        <option value="event">Мероприятия</option>
+        <option value="game">Игры</option>
+        <option value="series">Сериалы</option>
+        <option value="music">Музыка</option>
+    </select>
+
+    <select id="dateFilter" onchange="filterReviews()">
+        <option value="new">Сначала новые</option>
+        <option value="old">Сначала старые</option>
+    </select>
+
+</div>
+{% for item in reviews %}
+<div class="review-card" data-category="{{ item.type }}" data-date="{{ item.review.date|date:'U' }}">
+
+    <div class="review-card-left">
+        {% if item.type == 'book' and item.review.book.cover %}
+            <img src="{{ item.review.book.cover.url }}">
+        {% elif item.type == 'film' and item.review.film.cover %}
+            <img src="{{ item.review.film.cover.url }}">
+        {% elif item.type == 'restaurant' and item.review.restaurant.photo %}
+            <img src="{{ item.review.restaurant.photo.url }}">
+        {% elif item.type == 'event' and item.review.event.photo %}
+            <img src="{{ item.review.event.photo.url }}">
+        {% elif item.type == 'game' and item.review.game.cover %}
+            <img src="{{ item.review.game.cover.url }}">
+        {% elif item.type == 'series' and item.review.series.cover %}
+            <img src="{{ item.review.series.cover.url }}">
+        {% elif item.type == 'music' and item.review.music.cover %}
+            <img src="{{ item.review.music.cover.url }}">
+        {% else %}
+            <span style="color:#bbb;">Нет фото</span>
+        {% endif %}
+    </div>
+
+    <div class="review-card-right">
+
+        <div class="review-title">
+            {% if item.type == 'book' %}
+                {{ item.review.book.name }}
+            {% elif item.type == 'film' %}
+                {{ item.review.film.name }}
+            {% elif item.type == 'restaurant' %}
+                {{ item.review.restaurant.name }}
+            {% elif item.type == 'event' %}
+                {{ item.review.event.name }}
+            {% elif item.type == 'game' %}
+                {{ item.review.game.name }}
+            {% elif item.type == 'series' %}
+                {{ item.review.series.name }}
+            {% elif item.type == 'music' %}
+                {{ item.review.music.name }}
+            {% endif %}
+        </div>
+
+        {% if item.type == 'book' %}
+            <div class="review-meta">
+                <b>Автор:</b>
+                {{ item.review.book.author|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.review.book.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'film' %}
+
+            <div class="review-meta">
+                <b>Режиссёр:</b>
+                {{ item.review.film.director|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.review.film.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'restaurant' %}
+
+            <div class="review-meta">
+                <b>Адрес:</b>
+                {{ item.review.restaurant.address|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Кухня:</b>
+                {% for tag in item.review.restaurant.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'event' %}
+
+            <div class="review-meta">
+                <b>Адрес:</b>
+                {{ item.review.event.address|default:"не указано" }}
+            </div>
+
+        {% elif item.type == 'game' %}
+
+            <div class="review-meta">
+                <b>Разработчик:</b>
+                {{ item.review.game.developer|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Издатель:</b>
+                {{ item.review.game.publisher|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Жанры:</b>
+                {% for tag in item.review.game.game_genres.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+            <div class="review-meta">
+                <b>Сеттинги:</b>
+                {% for tag in item.review.game.settings.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'series' %}
+
+            <div class="review-meta">
+                <b>Шоураннер:</b>
+                {{ item.review.series.showrunner|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.review.series.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'music' %}
+
+            <div class="review-meta">
+                <b>Исполнитель:</b>
+                {{ item.review.music.artist|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Жанры:</b>
+                {% for tag in item.review.music.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% endif %}
+
+        <div class="review-meta">
+            <b>Оценка:</b> {{ item.review.rating }} из 5
+        </div>
+
+        <div class="review-text">
+            {{ item.review.full_text|default:"отзыв не добавлен" }}
+        </div>
+
+        <div class="review-footer">
+
+            <div class="review-date">
+                {{ item.review.date }}
+            </div>
+
+            <div>
+                <button class="review-btn" onclick="openEditPanel('{{ item.type }}', {{ item.review.id }})">
+                    Редактировать
+                </button>
+
+                <form method="post" style="display:inline;" onsubmit="return deleteReview('{{ item.type }}', {{ item.review.id }}, this);">
+                    {% csrf_token %}
+                    <button type="submit" class="review-btn">Удалить</button>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<div id="grid2" class="panel">
+    <div class="reviews-filters-wrapper">
+        <div class="reviews-filters">
+            <select id="recommendationCategoryFilter"
+                    onchange="filterRecommendations()">
+                <option value="all">Все категории</option>
+                <option value="book">Книги</option>
+                <option value="film">Фильмы</option>
+                <option value="restaurant">Заведения</option>
+                <option value="event">Мероприятия</option>
+                <option value="game">Игры</option>
+                <option value="series">Сериалы</option>
+                <option value="music">Музыка</option>
+            </select>
+        </div>
+    </div>
+  {% for item in recommendations %}
+
+  <div class="review-card" data-category="{{ item.type }}">
+
+      <div class="review-card-left">
+          {% if item.obj.cover %}
+              <img src="{{ item.obj.cover.url }}">
+          {% elif item.obj.photo %}
+              <img src="{{ item.obj.photo.url }}">
+          {% else %}
+              <span style="color:#bbb;">Нет фото</span>
+          {% endif %}
+      </div>
+
+      <div class="review-card-right">
+
+          <div class="review-title">
+              {{ item.obj.name }}
+          </div>
+
+          {% if item.type == 'book' %}
+
+            <div class="review-meta">
+                <b>Автор:</b>
+                {{ item.obj.author|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.obj.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'film' %}
+
+            <div class="review-meta">
+                <b>Режиссёр:</b>
+                {{ item.obj.director|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.obj.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'restaurant' %}
+
+            <div class="review-meta">
+                <b>Адрес:</b>
+                {{ item.obj.address|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Кухня:</b>
+                {% for tag in item.obj.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'event' %}
+
+            <div class="review-meta">
+                <b>Адрес:</b>
+                {{ item.obj.address|default:"не указано" }}
+            </div>
+
+        {% elif item.type == 'game' %}
+
+            <div class="review-meta">
+                <b>Разработчик:</b>
+                {{ item.obj.developer|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Жанры:</b>
+                {% for tag in item.obj.game_genres.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+            <div class="review-meta">
+                <b>Сеттинги:</b>
+                {% for tag in item.obj.settings.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'series' %}
+
+            <div class="review-meta">
+                <b>Шоураннер:</b>
+                {{ item.obj.showrunner|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Теги:</b>
+                {% for tag in item.obj.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% elif item.type == 'music' %}
+
+            <div class="review-meta">
+                <b>Исполнитель:</b>
+                {{ item.obj.artist|default:"не указано" }}
+            </div>
+
+            <div class="review-meta">
+                <b>Жанры:</b>
+                {% for tag in item.obj.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    не указано
+                {% endfor %}
+            </div>
+
+        {% endif %}
+
+          <div class="review-meta">
+              <b>Средняя оценка:</b> {{ item.avg_rating }}
+          </div>
+
+          <div class="review-footer">
+              <button class="review-btn" onclick="openReviewsPanel('{{ item.type }}', {{ item.obj.id }})">
+                  Отзывы
+              </button>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div id="aboutPanel" class="panel" style="display:none;">
+  <h2>О проекте</h2>
+  <div style="width:100%; min-height:250px; margin-top:10px; padding:10px; border-radius:8px; background:#f2f2f2;">
+    Оставляй отзывы на любимые вещи и получай персональные рекомендации, основанные на мнениях людей с похожими вкусами.
+    Разработчик: Плехоткин Е.А.
+  </div>
+</div>
+
+<div id="editOverlay" onclick="closeEditPanel()"></div>
+
+<div id="editPanel" style="display:none;">
+    <div class="review-wrapper">
+
+        <div class="review-right">
+
+            <form id="editForm" method="post">
+                {% csrf_token %}
+
+                <div id="editFormContent">
+
+                    <label for="editRating">Оценка</label>
+                    <select name="rating" id="editRating" required>
+                        <option value="">Выберите оценку</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                    <label for="editFullText">Отзыв</label>
+                    <textarea name="full_text" id="editFullText" rows="4"></textarea>
+                </div>
+
+                <button type="submit" class="publish-btn">Сохранить</button>
+
+                <button type="button"
+                        class="publish-btn"
+                        onclick="closeEditPanel()">
+                    Отмена
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="reviewsOverlay" onclick="closeReviewsPanel()" style="display:none;"></div>
+
+<div id="reviewsPanel" style="display:none;">
+    <div class="review-wrapper">
+        <div class="review-right" style="width:100%;">
+            <div id="reviewsContent"></div>
+            <button class="publish-btn"
+                    style="margin-top:20px;"
+                    onclick="closeReviewsPanel()">
+                Закрыть
+            </button>
+        </div>
+    </div>
+</div>
+
+    <div id="profilePanel" class="panel" style="display:none;">
+        <div class="review-wrapper" style="flex-direction: column; gap: 15px;">
+
+            <div style="color:#8a7ce0; font-weight:bold; font-size:18px;">
+                {{ user_email }}
+            </div>
+
+            <div>
+                Количество оставленных отзывов: <b>{{ review_count }}</b>
+            </div>
+
+            <div>
+                Любимые категории:
+                {% if favorite_categories %}
+                    <b>{{ favorite_categories|join:", " }}</b>
+                {% else %}
+                    <span>Нет данных</span>
+                {% endif %}
+            </div>
+
+            <div>
+                Любимые жанры:
+                {% if favorite_genres %}
+                    <b>{{ favorite_genres|join:", " }}</b>
+                {% else %}
+                    <span>Нет данных</span>
+                {% endif %}
+            </div>
+
+            <div style="margin-top:20px; text-align:center;">
+                <button
+                    style="
+                        background:#8a7ce0;
+                        color:white;
+                        border:none;
+                        padding:12px 25px;
+                        border-radius:20px;
+                        cursor:pointer;
+                        font-weight:bold;
+                    "
+                    onclick="window.location.href='{% url 'users:login' %}'">
+                    СМЕНИТЬ ПОЛЬЗОВАТЕЛЯ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+  </div>
+</body>
+<script src="{% static 'js/reviews.js' %}"></script>
+</html>

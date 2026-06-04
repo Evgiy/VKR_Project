@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация — Дневник Хроник Моих Интересов</title>
+
+  <style>
+
+    body {
+      margin: 0;
+      font-family: "Arial", sans-serif;
+      background-color: #9b86e1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+      margin-top: 150px;
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: white;
+      color: #6d7cff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-size: 22px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background 0.2s, transform 0.1s;
+      z-index: 1000;
+    }
+
+    .back-btn:hover {
+      background-color: #f2f2f2;
+      transform: scale(1.05);
+    }
+
+    .title {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 36px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 900;
+      text-align: center;
+      width: 90%;
+      line-height: 1.2;
+    }
+
+    .form-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 30px 40px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      text-align: left;
+    }
+
+    .form-card h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #e9e9e9;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #6d7cff;
+      background-color: #f5f5ff;
+    }
+
+    .register-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #6d7cff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .register-btn:hover {
+      background-color: #5a6aff;
+    }
+
+    .login-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    .login-text a {
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+
+    .login-text a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .title {
+        font-size: 26px;
+        top: 30px;
+      }
+      .container {
+        margin-top: 120px;
+      }
+      .form-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <a href="#" class="back-btn" title="Назад" onclick="history.back(); return false;">
+    &#x25C0;
+  </a>
+  <h1 class="title">ДНЕВНИК ХРОНИК МОИХ ИНТЕРЕСОВ</h1>
+  <div class="container">
+    <div class="form-card">
+
+      <h2>РЕГИСТРАЦИЯ</h2>
+
+      <form method="post" action="">
+        {% csrf_token %}
+
+        <label for="email">Почта</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Введите почту"
+          required
+        >
+
+        <label for="password1">Пароль</label>
+        <input
+          type="password"
+          id="password1"
+          name="password1"
+          placeholder="Введите пароль"
+          required
+        >
+
+        <label for="password2">Повторите пароль</label>
+        <input
+          type="password"
+          id="password2"
+          name="password2"
+          placeholder="Повторите пароль"
+          required
+        >
+
+        <button type="submit" class="register-btn">
+          ЗАРЕГИСТРИРОВАТЬСЯ
+        </button>
+      </form>
+
+      <div class="login-text">
+        <span>Есть аккаунт?</span>
+        <a href="{% url 'users:login' %}">Войти</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
