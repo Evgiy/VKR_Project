@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Опрос интересов</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#9b86e1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:700px;
+    padding:20px;
+}
+
+.survey-card{
+    background:white;
+    border-radius:12px;
+    padding:35px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+
+h2{
+    text-align:center;
+    margin-top:0;
+    margin-bottom:25px;
+}
+
+.checkbox-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.checkbox-item{
+    background:#f3f3f3;
+    padding:10px 15px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.checkbox-item input{
+    margin-right:8px;
+}
+
+.category-block{
+    margin-bottom:25px;
+}
+
+.category-block h3{
+    margin-bottom:10px;
+}
+
+select{
+    width:100%;
+    min-height:150px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    padding:10px;
+    font-size:14px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:space-between;
+    margin-top:30px;
+}
+
+.btn{
+    background:#6d7cff;
+    color:white;
+    border:none;
+    border-radius:8px;
+    padding:12px 25px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#5a6aff;
+}
+
+.ts-wrapper {
+    margin-top: 10px;
+}
+
+.ts-control {
+    min-height: 42px;
+    border-radius: 8px !important;
+}
+
+.ts-dropdown {
+    border-radius: 8px;
+}
+
+</style>
+</head>
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<body>
+
+<div class="container">
+
+<div class="survey-card">
+
+    <div id="step1">
+
+        <h2>Выберите любимые категории</h2>
+
+        <div class="checkbox-list">
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="book">
+                Книги
+            </label>
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="film">
+                Фильмы
+            </label>
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="game">
+                Игры
+            </label>
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="series">
+                Сериалы
+            </label>
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="music">
+                Музыка
+            </label>
+
+            <label class="checkbox-item">
+                <input type="checkbox" value="restaurant">
+                Заведения
+            </label>
+
+        </div>
+
+        <div class="buttons">
+            <div></div>
+            <button class="btn" id="nextBtn">
+                Далее
+            </button>
+        </div>
+
+    </div>
+
+    <div id="step2" style="display:none">
+
+        <h2>Выберите любимые теги</h2>
+
+        <div id="tagsContainer"></div>
+
+        <div class="buttons">
+
+            <button class="btn" id="backBtn">
+                Назад
+            </button>
+
+            <button class="btn" id="finishBtn">
+                Завершить
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+const allTags = [
+
+{% for tag in tags %}
+
+{
+    id:"{{ tag.id }}",
+    name:"{{ tag.name }}",
+    type:"{{ tag.type }}"
+},
+
+{% endfor %}
+
+];
+
+</script>
+
+<script>
+
+let selectedCategories = [];
+
+document
+.getElementById("nextBtn")
+.onclick = function(e){
+
+    e.preventDefault();
+
+    selectedCategories = [];
+
+    document
+    .querySelectorAll(
+        '#step1 input:checked'
+    )
+    .forEach(function(el){
+
+        selectedCategories.push(
+            el.value
+        );
+
+    });
+
+    buildTagLists();
+
+    document
+    .getElementById("step1")
+    .style.display = "none";
+
+    document
+    .getElementById("step2")
+    .style.display = "block";
+};
+
+</script>
+
+<script>
+
+function buildTagLists(){
+
+    let html = "";
+
+    if(selectedCategories.includes("book")){
+
+        html += `
+        <div class="category-block">
+            <h3>Книги</h3>
+            <select multiple id="book_tags">
+        `;
+
+        allTags
+        .filter(
+            t => t.type === "genre"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    if(selectedCategories.includes("film")){
+
+        html += `
+        <div class="category-block">
+            <h3>Фильмы</h3>
+            <select multiple id="film_tags">
+        `;
+
+        allTags
+        .filter(
+            t => t.type === "genre"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    if(selectedCategories.includes("game")){
+
+        html += `
+        <div class="category-block">
+            <h3>Игры</h3>
+            <select multiple id="game_tags">
+        `;
+
+        allTags
+        .filter(
+            t =>
+            t.type === "game_genre" ||
+            t.type === "setting"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    if(selectedCategories.includes("series")){
+
+        html += `
+        <div class="category-block">
+            <h3>Сериалы</h3>
+            <select multiple id="series_tags">
+        `;
+
+        allTags
+        .filter(
+            t => t.type === "genre"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    if(selectedCategories.includes("music")){
+
+        html += `
+        <div class="category-block">
+            <h3>Музыка</h3>
+            <select multiple id="music_tags">
+        `;
+
+        allTags
+        .filter(
+            t => t.type === "music_genre"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    if(selectedCategories.includes("restaurant")){
+
+        html += `
+        <div class="category-block">
+            <h3>Заведения</h3>
+            <select multiple id="restaurant_tags">
+        `;
+
+        allTags
+        .filter(
+            t => t.type === "cuisine"
+        )
+        .forEach(function(tag){
+
+            html += `
+            <option value="${tag.id}">
+                ${tag.name}
+            </option>
+            `;
+
+        });
+
+        html += `
+            </select>
+        </div>
+        `;
+    }
+
+    document
+    .getElementById("tagsContainer")
+    .innerHTML = html;
+    initTagSelects();
+}
+
+</script>
+
+<script>
+
+document
+.getElementById("backBtn")
+.onclick = function(e){
+
+    e.preventDefault();
+
+    document
+    .getElementById("step2")
+    .style.display = "none";
+
+    document
+    .getElementById("step1")
+    .style.display = "block";
+};
+
+</script>
+<script>
+function initTagSelects() {
+
+    document
+    .querySelectorAll('select[multiple]')
+    .forEach(select => {
+
+        if(select.tomselect){
+            select.tomselect.destroy();
+        }
+
+        new TomSelect(select, {
+            plugins: ['remove_button'],
+            create: false,
+            persist: false,
+            maxItems: null,
+            placeholder: 'Выберите теги...'
+        });
+
+    });
+
+}
+</script>
+<script>
+
+document
+.getElementById("finishBtn")
+.onclick = function(e){
+
+    e.preventDefault();
+
+    let selectedTags = [];
+
+    document
+    .querySelectorAll('#step2 select')
+    .forEach(function(select){
+
+        if(select.tomselect){
+
+            select.tomselect.items.forEach(function(id){
+
+                selectedTags.push(id);
+
+            });
+
+        }
+
+    });
+
+    const formData = new FormData();
+
+    selectedCategories.forEach(function(cat){
+
+        formData.append(
+            "categories[]",
+            cat
+        );
+
+    });
+
+    selectedTags.forEach(function(tag){
+
+        formData.append(
+            "tags[]",
+            tag
+        );
+
+    });
+
+    fetch(
+        "/users/save-survey/",
+        {
+            method:"POST",
+            body:formData,
+            headers:{
+                "X-CSRFToken":"{{ csrf_token }}"
+            }
+        }
+    )
+    .then(response => response.json())
+    .then(data => {
+
+        console.log(data);
+
+        if(data.success){
+
+            window.location = "/main/";
+
+        }else{
+
+            alert("Ошибка сохранения");
+
+        }
+
+    })
+    .catch(error => {
+
+        console.error(error);
+        alert("Ошибка отправки данных");
+
+    });
+
+};
+
+</script>
+</body>
+</html>
