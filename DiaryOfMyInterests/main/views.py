@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
 from .forms import (BookForm, FilmForm, RestaurantForm, EventForm, GameForm, SeriesForm, MusicForm,)
-from .recommendations import get_user_recommendations
+from .recommendations import get_recommendations
 from typing import Type
 from django.db.models import Model
 from collections import Counter
@@ -119,7 +119,7 @@ def home(request):
     # РЕКОМЕНДАЦИИ
     # =====================================================
 
-    recommendations = get_user_recommendations(user)
+    recommendations = get_recommendations(user)
 
     # =====================================================
     # КОЛИЧЕСТВО ОТЗЫВОВ
@@ -205,6 +205,42 @@ def home(request):
             tag for tag, count in counts.items()
             if count == max_count
         ]
+
+    category_map = {
+        'book': 'Книги',
+        'film': 'Фильмы',
+        'game': 'Игры',
+        'series': 'Сериалы',
+        'music': 'Музыка',
+        'restaurant': 'Заведения',
+        'event': 'Мероприятия',
+    }
+
+    survey_categories = [
+        category_map.get(cat, cat)
+        for cat in user.favorite_categories
+    ]
+
+    survey_tags = list(
+        user.favorite_tags.values_list(
+            'name',
+            flat=True
+        )
+    )
+
+    favorite_categories = list(
+        dict.fromkeys(
+            favorite_categories +
+            survey_categories
+        )
+    )
+
+    favorite_genres = list(
+        dict.fromkeys(
+            favorite_genres +
+            survey_tags
+        )
+    )
 
     return render(request, 'main/main.html', {
         'user_email': user.email,
@@ -528,6 +564,23 @@ def profile_data(request):
             if count == max_count
         ]
 
+    survey_categories = user.favorite_categories
+
+    survey_tags = list(
+        user.favorite_tags.values_list(
+            'name',
+            flat=True
+        )
+    )
+
+    favorite_categories = list(
+        set(favorite_categories + survey_categories)
+    )
+
+    favorite_genres = list(
+        set(favorite_genres + survey_tags)
+    )
+
     return {
         'review_count': review_count,
         'favorite_categories': favorite_categories,
@@ -802,7 +855,7 @@ def create_review_api(request, review_type):
 def my_recommendations(request):
 
     user = request.user
-    recommendations = get_user_recommendations(user)
+    recommendations = get_recommendations(user)
     result = []
     for r in recommendations[:20]:
         obj = r["obj"]

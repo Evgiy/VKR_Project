@@ -12,6 +12,9 @@ from rest_framework import status, permissions
 from .serializers import UserRegisterSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from main.models import Tag
 
 
 def registration(request):
@@ -28,10 +31,42 @@ def registration(request):
         else:
             user = Users.objects.create_user(username=username, email=email, password=password1)
             login(request, user)
-            return redirect('main:home')
+            return redirect('users:survey')
 
     return render(request, 'users/registration.html')
 
+@login_required
+def survey(request):
+
+    return render(
+        request,
+        'users/survey.html', {'tags': Tag.objects.all()},
+    )
+
+@login_required
+def save_survey(request):
+    if request.method == 'POST':
+        categories = request.POST.getlist(
+            'categories[]'
+        )
+        tags = request.POST.getlist(
+            'tags[]'
+        )
+        user = request.user
+        user.favorite_categories = categories
+        user.save()
+
+        user.favorite_tags.set(
+            Tag.objects.filter(
+                id__in=tags
+            )
+        )
+        return JsonResponse({
+            'success': True
+        })
+    return JsonResponse({
+        'success': False
+    })
 
 def login_view(request):
     if request.method == 'POST':

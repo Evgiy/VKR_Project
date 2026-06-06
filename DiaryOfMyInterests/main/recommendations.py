@@ -222,3 +222,156 @@ def get_user_recommendations(user):
         })
 
     return recommendations
+
+def get_survey_recommendations(user):
+
+    recommendations = []
+
+    categories = user.favorite_categories
+    tags = user.favorite_tags.all()
+
+    if not categories or not tags.exists():
+        return recommendations
+
+    if "book" in categories:
+
+        books = Book.objects.filter(
+            tags__in=tags
+        ).distinct()[:10]
+
+        for book in books:
+            avg = BookReview.objects.filter(
+                book=book
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'book',
+                'obj': book,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "film" in categories:
+
+        films = Film.objects.filter(
+            tags__in=tags
+        ).distinct()[:10]
+
+        for film in films:
+            avg = FilmReview.objects.filter(
+                film=film
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'film',
+                'obj': film,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "game" in categories:
+
+        games = Game.objects.filter(
+            Q(game_genres__in=tags) |
+            Q(settings__in=tags)
+        ).distinct()[:10]
+
+        for game in games:
+            avg = GameReview.objects.filter(
+                game=game
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'game',
+                'obj': game,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "series" in categories:
+
+        series_list = Series.objects.filter(
+            tags__in=tags
+        ).distinct()[:10]
+
+        for series in series_list:
+            avg = SeriesReview.objects.filter(
+                series=series
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'series',
+                'obj': series,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "music" in categories:
+
+        music_list = Music.objects.filter(
+            tags__in=tags
+        ).distinct()[:10]
+
+        for music in music_list:
+            avg = MusicReview.objects.filter(
+                music=music
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'music',
+                'obj': music,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "restaurant" in categories:
+
+        restaurants = Restaurant.objects.filter(
+            tags__in=tags
+        ).distinct()[:10]
+
+        for restaurant in restaurants:
+            avg = RestaurantReview.objects.filter(
+                restaurant=restaurant
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'restaurant',
+                'obj': restaurant,
+                'avg_rating': round(avg, 1)
+            })
+
+    if "event" in categories:
+
+        events = Event.objects.all()[:10]
+
+        for event in events:
+            avg = EventReview.objects.filter(
+                event=event
+            ).aggregate(
+                avg=Avg('rating')
+            )['avg'] or 0
+
+            recommendations.append({
+                'type': 'event',
+                'obj': event,
+                'avg_rating': round(avg, 1)
+            })
+
+    return recommendations
+
+def get_recommendations(user):
+
+    classic = get_user_recommendations(user)
+
+    if classic:
+        return classic
+
+    return get_survey_recommendations(user)

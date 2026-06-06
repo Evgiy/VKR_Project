@@ -3,6 +3,8 @@ from django.db import models
 
 class Users(AbstractUser):
     email = models.EmailField('Почта', unique=True, default='Почта')
+    favorite_categories = models.JSONField(default=list, blank=True)
+    favorite_tags = models.ManyToManyField('main.Tag', blank=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 

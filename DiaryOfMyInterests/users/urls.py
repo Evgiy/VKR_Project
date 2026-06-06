@@ -16,6 +16,8 @@ urlpatterns = [
     path('register/', UserRegisterView.as_view(), name='register'),
     path('api/login/', UserLoginView.as_view(), name='api_login'),
     path('api/current_user/', CurrentUserView.as_view(), name='current_user'),
+    path('survey/', views.survey, name='survey'),
+    path('save-survey/', views.save_survey, name='save_survey'),
 ]
 
 urlpatterns += router.urls
